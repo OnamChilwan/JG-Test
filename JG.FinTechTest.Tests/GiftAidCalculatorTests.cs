@@ -22,8 +22,14 @@ namespace JG.FinTechTest.Tests
     {
         public decimal Calculate(decimal donationAmount)
         {
-            var giftAidRatio = 20M / (100 - 20M);
+            var tax = new BasicTaxRate();
+            var giftAidRatio = tax.Rate / (100 - tax.Rate);
             return donationAmount * giftAidRatio;
         }
+    }
+
+    public class BasicTaxRate
+    {
+        public decimal Rate => 20m;
     }
 }
