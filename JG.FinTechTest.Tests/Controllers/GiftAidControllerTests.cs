@@ -2,6 +2,8 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using JG.FinTechTest.Models;
+using JG.FinTechTest.ValueTypes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
@@ -30,8 +32,8 @@ namespace JG.FinTechTest.Tests.Controllers
     {
         private readonly HttpClient _httpClient;
         private HttpResponseMessage _httpResponse;
-        private decimal _donation;
         private GiftAidResponse _giftAidResponse;
+        private decimal _donation;
 
         public GiftAidSteps()
         {
@@ -45,7 +47,7 @@ namespace JG.FinTechTest.Tests.Controllers
 
         public void WhenRequestIsSentToCalculateGiftAid()
         {
-            _httpResponse = _httpClient.GetAsync($"/api/giftaid/", CancellationToken.None).GetAwaiter().GetResult();
+            _httpResponse = _httpClient.GetAsync($"/api/giftaid/{_donation}", CancellationToken.None).GetAwaiter().GetResult();
         }
 
         public void ThenAnOkayResponseIsReturned()
@@ -56,20 +58,14 @@ namespace JG.FinTechTest.Tests.Controllers
 
         public void ThenTheCorrectGiftAidAmountIsReturned()
         {
-            Assert.That(_giftAidResponse.GiftAidAmount, Is.GreaterThan(0));
+            var expectedGiftAid = new GiftAid(_donation);
+            Assert.That(_giftAidResponse.GiftAidAmount, Is.EqualTo(expectedGiftAid.Amount));
         }
 
         public void ThenTheCorrectDonationAmountIsReturned()
         {
             Assert.That(_giftAidResponse.DonationAmount, Is.EqualTo(_donation));
         }
-    }
-
-    public class GiftAidResponse
-    {
-        public decimal DonationAmount { get; set; }
-
-        public decimal GiftAidAmount { get; set; }
     }
 
     internal class TestBuilder
