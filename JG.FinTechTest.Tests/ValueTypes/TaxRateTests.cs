@@ -1,7 +1,7 @@
 using JG.FinTechTest.ValueTypes;
 using NUnit.Framework;
 
-namespace JG.FinTechTest.Tests
+namespace JG.FinTechTest.Tests.ValueTypes
 {
     [TestFixture]
     public class TaxRateTests
