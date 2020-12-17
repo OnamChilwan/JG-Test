@@ -21,7 +21,7 @@ namespace JG.FinTechTest.Tests
     {
         public decimal Calculate(decimal donationAmount)
         {
-            return 0M;
+            return 25M;
         }
     }
 }
