@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading;
+using System.Threading.Tasks;
+using JG.FinTechTest.Commands;
 using JG.FinTechTest.Models;
 using JG.FinTechTest.ValueTypes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TestStack.BDDfy;
 
@@ -49,6 +53,7 @@ namespace JG.FinTechTest.Tests.Controllers
                 .When(x => x.WhenDonationRequestIsMade())
                 .Then(x => x.ThenCreatedResultIsReturned())
                 .And(x => x.ThenDonationIsReturned(donation))
+                .And(x => x.ThenDonationIsPersisted())
                 .BDDfy();
         }
     }
@@ -113,6 +118,11 @@ namespace JG.FinTechTest.Tests.Controllers
             Assert.That(_donation.PostalCode, Is.EqualTo(donation.PostalCode));
         }
 
+        public void ThenDonationIsPersisted()
+        {
+            Assert.That(FakeAddDonationCommand.Documents, Is.Not.Empty);
+        }
+
         public void ThenAnOkayResponseIsReturned()
         {
             Assert.That(_httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -136,9 +146,34 @@ namespace JG.FinTechTest.Tests.Controllers
     {
         public static HttpClient CreateFakeHttpClient()
         {
-            var webhostBuilder = new WebHostBuilder().UseStartup<Startup>();
+            var webhostBuilder = new WebHostBuilder().UseStartup<TestStartup>();
             var fakeHttpClient = new TestServer(webhostBuilder).CreateClient();
             return fakeHttpClient;
         }
+    }
+
+    public class TestStartup : Startup
+    {
+        protected override void ConfigureDependencies(IServiceCollection services)
+        {
+            services.AddSingleton<IAddDonationCommand, FakeAddDonationCommand>();
+        }
+    }
+
+    internal class FakeAddDonationCommand : IAddDonationCommand
+    {
+        public FakeAddDonationCommand()
+        {
+            Documents = new List<Donation>();
+        }
+
+        public Task<int> Execute(Donation donation)
+        {
+            Documents.Add(donation);
+
+            return Task.FromResult(123);
+        }
+
+        internal static List<Donation> Documents { get; private set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using JG.FinTechTest.Commands;
 using JG.FinTechTest.Models;
 using JG.FinTechTest.Services;
 using JG.FinTechTest.ValueTypes;
@@ -10,6 +11,13 @@ namespace JG.FinTechTest.Controllers
     [ApiController]
     public class GiftAidController
     {
+        private readonly IAddDonationCommand _addDonationCommand;
+
+        public GiftAidController(IAddDonationCommand addDonationCommand)
+        {
+            _addDonationCommand = addDonationCommand;
+        }
+
         [HttpGet("{donation:decimal}")]
         public IActionResult Get([FromRoute] decimal donation)
         {
@@ -28,6 +36,8 @@ namespace JG.FinTechTest.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]Donation donation)
         {
+            _addDonationCommand.Execute(donation);
+
             return new CreatedResult(string.Empty, donation);
         }
     }

@@ -1,22 +1,20 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using JG.FinTechTest.Commands;
+using JG.FinTechTest.Controllers;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JG.FinTechTest
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            ConfigureDependencies(services);
+
+            services
+                .AddMvc()
+                .AddApplicationPart(typeof(GiftAidController).Assembly);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -33,6 +31,11 @@ namespace JG.FinTechTest
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+
+        protected virtual void ConfigureDependencies(IServiceCollection services)
+        {
+            services.AddSingleton<IAddDonationCommand>(new AddDonationCommand());
         }
     }
 }
