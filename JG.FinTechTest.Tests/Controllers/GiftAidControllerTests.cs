@@ -54,6 +54,7 @@ namespace JG.FinTechTest.Tests.Controllers
                 .Then(x => x.ThenCreatedResultIsReturned())
                 .And(x => x.ThenDonationIsReturned(donation))
                 .And(x => x.ThenDonationIsPersisted())
+                .And(x => x.ThenTheLocationUriIsSet())
                 .BDDfy();
         }
     }
@@ -121,6 +122,11 @@ namespace JG.FinTechTest.Tests.Controllers
         public void ThenDonationIsPersisted()
         {
             Assert.That(FakeAddDonationCommand.Documents, Is.Not.Empty);
+        }
+
+        public void ThenTheLocationUriIsSet()
+        {
+            Assert.That(_httpResponse.Headers.Location, Is.EqualTo("/location/to/get/resource/123"));
         }
 
         public void ThenAnOkayResponseIsReturned()
