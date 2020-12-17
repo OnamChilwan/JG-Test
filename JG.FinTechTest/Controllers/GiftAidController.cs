@@ -24,5 +24,11 @@ namespace JG.FinTechTest.Controllers
             var giftAidResponse = new GiftAidResponse { DonationAmount = donation, GiftAidAmount = giftAid.Amount };
             return new OkObjectResult(giftAidResponse);
         }
+
+        [HttpPost]
+        public IActionResult Post()
+        {
+            return new CreatedResult(string.Empty, null);
+        }
     }
 }
