@@ -11,12 +11,7 @@ namespace JG.FinTechTest.Controllers
         [HttpGet("{donation:decimal}")]
         public IActionResult Get([FromRoute] decimal donation)
         {
-            if (donation < 2m)
-            {
-                return new BadRequestResult();
-            }
-
-            if (donation > 100000.00m)
+            if (!GiftAidValidator.IsValid(donation))
             {
                 return new BadRequestResult();
             }
@@ -24,6 +19,24 @@ namespace JG.FinTechTest.Controllers
             var giftAid = new GiftAid(donation);
             var giftAidResponse = new GiftAidResponse { DonationAmount = donation, GiftAidAmount = giftAid.Amount };
             return new OkObjectResult(giftAidResponse);
+        }
+    }
+
+    public class GiftAidValidator
+    {
+        public static bool IsValid(decimal donation)
+        {
+            if (donation < 2m)
+            {
+                return false;
+            }
+
+            if (donation > 100000.00m)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
