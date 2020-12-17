@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace JG.FinTechTest.Tests.ValueTypes
 {
     [TestFixture]
-    public class GiftAidCalculatorTests
+    public class GiftAidTests
     {
         [TestCase(100, 25)]
         [TestCase(10.50, 2.625)]

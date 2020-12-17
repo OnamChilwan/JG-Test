@@ -1,13 +1,11 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 using JG.FinTechTest.Models;
 using JG.FinTechTest.ValueTypes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using TestStack.BDDfy;
 
 namespace JG.FinTechTest.Tests.Controllers
