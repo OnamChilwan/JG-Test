@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading;
 using JG.FinTechTest.Models;
 using JG.FinTechTest.ValueTypes;
@@ -29,13 +30,24 @@ namespace JG.FinTechTest.Tests.Controllers
 
         [TestCase(1.99)]
         [TestCase(100000.01)]
-        public void InvalidDonationAmountsWhenCalculatingGiftAid(decimal donation)  
+        public void InvalidDonationAmountsWhenCalculatingGiftAid(decimal donation)
         {
             new GiftAidSteps()
                 .Given(x => x.GivenADonationOf(donation))
                 .When(x => x.WhenRequestIsSentToCalculateGiftAid())
                 .Then(x => x.ThenBadRequestIsReturned())
-                .Then(x => x.ErrorResponseIsReturnedWithErrorCode("InvalidDonationAmount"))
+                .Then(x => x.ThenErrorResponseIsReturnedWithErrorCode("InvalidDonationAmount"))
+                .BDDfy();
+        }
+
+        [Test]
+        public void SuccessfullyAddDonation()
+        {
+            var donation = new Donation { DonationAmount = 10.5m, Name = "Mr Arsene Wenger", PostalCode = "postal code" };
+            new GiftAidSteps()
+                .Given(x => x.GivenADonationOf(donation))
+                .When(x => x.WhenDonationRequestIsMade())
+                .Then(x => x.ThenCreatedResultIsReturned())
                 .BDDfy();
         }
     }
@@ -45,7 +57,8 @@ namespace JG.FinTechTest.Tests.Controllers
         private readonly HttpClient _httpClient;
         private HttpResponseMessage _httpResponse;
         private GiftAidResponse _giftAidResponse;
-        private decimal _donation;
+        private decimal _donationAmount;
+        private Donation _donation;
         private List<ApiError> _errors;
 
         public GiftAidSteps()
@@ -55,12 +68,41 @@ namespace JG.FinTechTest.Tests.Controllers
 
         public void GivenADonationOf(decimal donation)
         {
+            _donationAmount = donation;
+        }
+
+        public void GivenADonationOf(Donation donation)
+        {
             _donation = donation;
         }
 
         public void WhenRequestIsSentToCalculateGiftAid()
         {
-            _httpResponse = _httpClient.GetAsync($"/api/giftaid/{_donation}", CancellationToken.None).GetAwaiter().GetResult();
+            _httpResponse = _httpClient.GetAsync($"/api/giftaid/{_donationAmount}", CancellationToken.None).GetAwaiter().GetResult();
+        }
+
+        public void WhenDonationRequestIsMade()
+        {
+            _httpResponse = _httpClient
+                .PostAsync($"/api/giftaid", _donation, new JsonMediaTypeFormatter())
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        public void ThenTheCorrectGiftAidAmountIsReturned()
+        {
+            var expectedGiftAid = new GiftAid(_donationAmount);
+            Assert.That(_giftAidResponse.GiftAidAmount, Is.EqualTo(expectedGiftAid.Amount));
+        }
+
+        public void ThenTheCorrectDonationAmountIsReturned()
+        {
+            Assert.That(_giftAidResponse.DonationAmount, Is.EqualTo(_donationAmount));
+        }
+
+        public void ThenErrorResponseIsReturnedWithErrorCode(string errorCode)
+        {
+            Assert.That(_errors.Any(x => x.ErrorCode == errorCode));
         }
 
         public void ThenAnOkayResponseIsReturned()
@@ -69,26 +111,16 @@ namespace JG.FinTechTest.Tests.Controllers
             _giftAidResponse = _httpResponse.Content.ReadAsAsync<GiftAidResponse>().Result;
         }
 
-        public void ThenTheCorrectGiftAidAmountIsReturned()
-        {
-            var expectedGiftAid = new GiftAid(_donation);
-            Assert.That(_giftAidResponse.GiftAidAmount, Is.EqualTo(expectedGiftAid.Amount));
-        }
-
-        public void ThenTheCorrectDonationAmountIsReturned()
-        {
-            Assert.That(_giftAidResponse.DonationAmount, Is.EqualTo(_donation));
-        }
-
         public void ThenBadRequestIsReturned()
         {
             Assert.That(_httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             _errors = _httpResponse.Content.ReadAsAsync<List<ApiError>>().Result;
         }
 
-        public void ErrorResponseIsReturnedWithErrorCode(string errorCode)
+        public void ThenCreatedResultIsReturned()
         {
-            Assert.That(_errors.Any(x => x.ErrorCode == errorCode));
+            Assert.That(_httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Created));
+            _donation = _httpResponse.Content.ReadAsAsync<Donation>().Result;
         }
     }
 
