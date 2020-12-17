@@ -48,12 +48,13 @@ namespace JG.FinTechTest.Tests.Controllers
         public void SuccessfullyAddDonation()
         {
             var donation = new Donation { DonationAmount = 10.5m, Name = "Mr Arsene Wenger", PostalCode = "postal code" };
+            var expectedGiftAid = new GiftAid(donation.DonationAmount);
             new GiftAidSteps()
                 .Given(x => x.GivenADonationOf(donation))
                 .When(x => x.WhenDonationRequestIsMade())
                 .Then(x => x.ThenCreatedResultIsReturned())
-                .And(x => x.ThenDonationIsReturned(donation))
-                .And(x => x.ThenDonationIsPersisted())
+                .And(x => x.ThenDonationIsReturned(donation, expectedGiftAid))
+                .And(x => x.ThenDonationIsPersisted(donation, expectedGiftAid))
                 .And(x => x.ThenTheLocationUriIsSet())
                 .BDDfy();
         }
@@ -112,16 +113,21 @@ namespace JG.FinTechTest.Tests.Controllers
             Assert.That(_errors.Any(x => x.ErrorCode == errorCode));
         }
 
-        public void ThenDonationIsReturned(Donation donation)
+        public void ThenDonationIsReturned(Donation donation, GiftAid expectedGiftAid)
         {
             Assert.That(_donation.DonationAmount, Is.EqualTo(donation.DonationAmount));
             Assert.That(_donation.Name, Is.EqualTo(donation.Name));
             Assert.That(_donation.PostalCode, Is.EqualTo(donation.PostalCode));
+            Assert.That(_donation.GiftAid, Is.EqualTo(expectedGiftAid.Amount));
         }
 
-        public void ThenDonationIsPersisted()
+        public void ThenDonationIsPersisted(Donation donation, GiftAid expectedGiftAid)
         {
-            Assert.That(FakeAddDonationCommand.Documents, Is.Not.Empty);
+            var document = FakeAddDonationCommand.Documents.First();
+            Assert.That(document.DonationAmount, Is.EqualTo(donation.DonationAmount));
+            Assert.That(document.GiftAid, Is.EqualTo(expectedGiftAid.Amount));
+            Assert.That(document.Name, Is.EqualTo(donation.Name));
+            Assert.That(document.PostalCode, Is.EqualTo(donation.PostalCode));
         }
 
         public void ThenTheLocationUriIsSet()

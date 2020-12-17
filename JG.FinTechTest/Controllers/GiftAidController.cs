@@ -37,7 +37,11 @@ namespace JG.FinTechTest.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Donation donation)
         {
+            var giftAid = new GiftAid(donation.DonationAmount);
+            donation.GiftAid = giftAid.Amount;
+
             var id = await _addDonationCommand.Execute(donation);
+
             return new CreatedResult($"location/to/get/resource/{id}", donation);
         }
     }

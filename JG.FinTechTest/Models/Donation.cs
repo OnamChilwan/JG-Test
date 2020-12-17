@@ -7,5 +7,7 @@
         public string PostalCode { get; set; }
 
         public decimal DonationAmount { get; set; }
+
+        public decimal GiftAid { get; set; }
     }
 }
