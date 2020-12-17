@@ -30,19 +30,41 @@ namespace JG.FinTechTest.Controllers
     {
         public static List<ApiError> Validate(decimal donation)
         {
+            var minimumDonation = new MinimumDonation();
+            var maximumDonation = new MaximumDonation();
             var errors = new List<ApiError>();
 
-            if (donation < 2m)
+            if (donation < minimumDonation.Amount)
             {
-                errors.Add(new ApiError("InvalidDonationAmount", "Minimum donation amount is 2.00"));
+                errors.Add(new ApiError("InvalidDonationAmount", $"Minimum donation amount is {minimumDonation}"));
             }
 
-            if (donation > 100000.00m)
+            if (donation > maximumDonation.Amount)
             {
-                errors.Add(new ApiError("InvalidDonationAmount", "Maximum donation amount is 100000.00"));
+                errors.Add(new ApiError("InvalidDonationAmount", $"Maximum donation amount is {maximumDonation}"));
             }
 
             return errors;
+        }
+    }
+
+    public class MinimumDonation : Money
+    {
+        public override decimal Amount => 2;
+    }
+
+    public class MaximumDonation : Money
+    {
+        public override decimal Amount => 100000.00m;
+    }
+
+    public abstract class Money
+    {
+        public abstract decimal Amount { get; }
+
+        public override string ToString()
+        {
+            return $"£{Amount:N}";
         }
     }
 }
