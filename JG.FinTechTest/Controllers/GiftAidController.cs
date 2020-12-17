@@ -16,6 +16,11 @@ namespace JG.FinTechTest.Controllers
                 return new BadRequestResult();
             }
 
+            if (donation > 100000.00m)
+            {
+                return new BadRequestResult();
+            }
+
             var giftAid = new GiftAid(donation);
             var giftAidResponse = new GiftAidResponse { DonationAmount = donation, GiftAidAmount = giftAid.Amount };
             return new OkObjectResult(giftAidResponse);

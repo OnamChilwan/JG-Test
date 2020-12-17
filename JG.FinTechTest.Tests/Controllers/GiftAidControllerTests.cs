@@ -26,7 +26,7 @@ namespace JG.FinTechTest.Tests.Controllers
         }
 
         [TestCase(1.99)]
-        [TestCase(100,000.01)]
+        [TestCase(100000.01)]
         public void InvalidDonationAmountsWhenCalculatingGiftAid(decimal donation)  
         {
             new GiftAidSteps()
