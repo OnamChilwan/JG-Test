@@ -26,9 +26,9 @@ namespace JG.FinTechTest.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post([FromBody]Donation donation)
         {
-            return new CreatedResult(string.Empty, null);
+            return new CreatedResult(string.Empty, donation);
         }
     }
 }
