@@ -3,3 +3,11 @@
 ################################################################################
 
 /.vs/JG.FinTechTest/v16/Server/sqlite3
+/.vs/JG-Test/v16
+/.vs/JG.FinTechTest/v16
+/.vs
+/JG.FinTechTest/bin/Debug/netcoreapp2.1
+/JG.FinTechTest/obj
+/JG.FinTechTest.Tests/bin/Debug/netcoreapp2.1
+/JG.FinTechTest.Tests/obj
+/_ReSharper.Caches
