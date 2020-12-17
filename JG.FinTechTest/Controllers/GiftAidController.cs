@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using JG.FinTechTest.Commands;
 using JG.FinTechTest.Models;
@@ -16,7 +17,7 @@ namespace JG.FinTechTest.Controllers
 
         public GiftAidController(IAddDonationCommand addDonationCommand)
         {
-            _addDonationCommand = addDonationCommand;
+            _addDonationCommand = addDonationCommand ?? throw new ArgumentNullException(nameof(addDonationCommand));
         }
 
         [HttpGet("{donation:decimal}")]
