@@ -36,7 +36,7 @@ namespace JG.FinTechTest.Tests.Controllers
                 .Given(x => x.GivenADonationOf(donation))
                 .When(x => x.WhenRequestIsSentToCalculateGiftAid())
                 .Then(x => x.ThenBadRequestIsReturned())
-                .Then(x => x.ThenErrorResponseIsReturnedWithErrorCode("InvalidDonationAmount"))
+                .And(x => x.ThenErrorResponseIsReturnedWithErrorCode("InvalidDonationAmount"))
                 .BDDfy();
         }
 
@@ -48,6 +48,7 @@ namespace JG.FinTechTest.Tests.Controllers
                 .Given(x => x.GivenADonationOf(donation))
                 .When(x => x.WhenDonationRequestIsMade())
                 .Then(x => x.ThenCreatedResultIsReturned())
+                .And(x => x.ThenDonationIsReturned(donation))
                 .BDDfy();
         }
     }
@@ -103,6 +104,13 @@ namespace JG.FinTechTest.Tests.Controllers
         public void ThenErrorResponseIsReturnedWithErrorCode(string errorCode)
         {
             Assert.That(_errors.Any(x => x.ErrorCode == errorCode));
+        }
+
+        public void ThenDonationIsReturned(Donation donation)
+        {
+            Assert.That(_donation.DonationAmount, Is.EqualTo(donation.DonationAmount));
+            Assert.That(_donation.Name, Is.EqualTo(donation.Name));
+            Assert.That(_donation.PostalCode, Is.EqualTo(donation.PostalCode));
         }
 
         public void ThenAnOkayResponseIsReturned()
