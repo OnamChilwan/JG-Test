@@ -24,6 +24,16 @@ namespace JG.FinTechTest.Tests.Controllers
                 .And(x => x.ThenTheCorrectDonationAmountIsReturned())
                 .BDDfy();
         }
+
+        [Test]
+        public void InvalidDonationAmountsWhenCalculatingGiftAid()
+        {
+            new GiftAidSteps()
+                .Given(x => x.GivenADonationOf(1.99m))
+                .When(x => x.WhenRequestIsSentToCalculateGiftAid())
+                .Then(x => x.ThenBadRequestIsReturned())
+                .BDDfy();
+        }
     }
 
     internal class GiftAidSteps
@@ -63,6 +73,11 @@ namespace JG.FinTechTest.Tests.Controllers
         public void ThenTheCorrectDonationAmountIsReturned()
         {
             Assert.That(_giftAidResponse.DonationAmount, Is.EqualTo(_donation));
+        }
+
+        public void ThenBadRequestIsReturned()
+        {
+            Assert.That(_httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
     }
 
