@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using JG.FinTechTest.Models;
@@ -33,6 +35,7 @@ namespace JG.FinTechTest.Tests.Controllers
                 .Given(x => x.GivenADonationOf(donation))
                 .When(x => x.WhenRequestIsSentToCalculateGiftAid())
                 .Then(x => x.ThenBadRequestIsReturned())
+                .Then(x => x.ErrorResponseIsReturnedWithErrorCode("InvalidDonationAmount"))
                 .BDDfy();
         }
     }
@@ -43,6 +46,7 @@ namespace JG.FinTechTest.Tests.Controllers
         private HttpResponseMessage _httpResponse;
         private GiftAidResponse _giftAidResponse;
         private decimal _donation;
+        private List<ApiError> _errors;
 
         public GiftAidSteps()
         {
@@ -79,6 +83,12 @@ namespace JG.FinTechTest.Tests.Controllers
         public void ThenBadRequestIsReturned()
         {
             Assert.That(_httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            _errors = _httpResponse.Content.ReadAsAsync<List<ApiError>>().Result;
+        }
+
+        public void ErrorResponseIsReturnedWithErrorCode(string errorCode)
+        {
+            Assert.That(_errors.Any(x => x.ErrorCode == errorCode));
         }
     }
 

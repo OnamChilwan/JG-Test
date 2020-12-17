@@ -1,4 +1,6 @@
-﻿using JG.FinTechTest.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using JG.FinTechTest.Models;
 using JG.FinTechTest.ValueTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +13,11 @@ namespace JG.FinTechTest.Controllers
         [HttpGet("{donation:decimal}")]
         public IActionResult Get([FromRoute] decimal donation)
         {
-            if (!GiftAidValidator.IsValid(donation))
+            var errors = GiftAidValidator.Validate(donation);
+
+            if (errors.Any())
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult(errors);
             }
 
             var giftAid = new GiftAid(donation);
@@ -24,19 +28,21 @@ namespace JG.FinTechTest.Controllers
 
     public class GiftAidValidator
     {
-        public static bool IsValid(decimal donation)
+        public static List<ApiError> Validate(decimal donation)
         {
+            var errors = new List<ApiError>();
+
             if (donation < 2m)
             {
-                return false;
+                errors.Add(new ApiError("InvalidDonationAmount", "Minimum donation amount is 2.00"));
             }
 
             if (donation > 100000.00m)
             {
-                return false;
+                errors.Add(new ApiError("InvalidDonationAmount", "Maximum donation amount is 100000.00"));
             }
 
-            return true;
+            return errors;
         }
     }
 }
