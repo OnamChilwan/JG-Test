@@ -7,7 +7,8 @@ namespace JG.FinTechTest.Tests
     public class GiftAidCalculatorTests
     {
         [TestCase(100, 25)]
-        [TestCase(200, 50)]
+        [TestCase(10.50, 2.625)]
+        [TestCase(1234, 308.5)]
         public void Given_A_Donation_When_Calculating_Gift_Aid_The_Correct_Amount_Is_Returned(decimal donationAmount, decimal expectedGiftAidAmount)
         {
             var subject = new GiftAidCalculator();
@@ -21,7 +22,8 @@ namespace JG.FinTechTest.Tests
     {
         public decimal Calculate(decimal donationAmount)
         {
-            return 25M;
+            var giftAidRatio = 20M / (100 - 20M);
+            return donationAmount * giftAidRatio;
         }
     }
 }
