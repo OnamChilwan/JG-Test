@@ -81,7 +81,7 @@ namespace JG.FinTechTest.Tests.Controllers
 
         public void WhenRequestIsSentToCalculateGiftAid()
         {
-            _httpResponse = _httpClient.GetAsync($"/api/giftaid/{_donationAmount}", CancellationToken.None).GetAwaiter().GetResult();
+            _httpResponse = _httpClient.GetAsync($"/api/giftaid?donation={_donationAmount}", CancellationToken.None).GetAwaiter().GetResult();
         }
 
         public void WhenDonationRequestIsMade()

@@ -11,7 +11,7 @@ namespace JG.FinTechTest.Controllers
 {
     [Route("api/giftaid")]
     [ApiController]
-    public class GiftAidController
+    public class GiftAidController : ControllerBase
     {
         private readonly IAddDonationCommand _addDonationCommand;
 
@@ -20,8 +20,8 @@ namespace JG.FinTechTest.Controllers
             _addDonationCommand = addDonationCommand ?? throw new ArgumentNullException(nameof(addDonationCommand));
         }
 
-        [HttpGet("{donation:decimal}")]
-        public IActionResult Get([FromRoute] decimal donation)
+        [HttpGet]
+        public IActionResult Get(decimal donation)
         {
             var errors = GiftAidValidator.Validate(donation);
 
