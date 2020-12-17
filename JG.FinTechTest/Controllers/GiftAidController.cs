@@ -47,24 +47,4 @@ namespace JG.FinTechTest.Controllers
             return errors;
         }
     }
-
-    public class MinimumDonation : Money
-    {
-        public override decimal Amount => 2;
-    }
-
-    public class MaximumDonation : Money
-    {
-        public override decimal Amount => 100000.00m;
-    }
-
-    public abstract class Money
-    {
-        public abstract decimal Amount { get; }
-
-        public override string ToString()
-        {
-            return $"£{Amount:N}";
-        }
-    }
 }
