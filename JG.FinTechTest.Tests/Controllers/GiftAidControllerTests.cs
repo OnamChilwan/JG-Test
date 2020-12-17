@@ -25,11 +25,12 @@ namespace JG.FinTechTest.Tests.Controllers
                 .BDDfy();
         }
 
-        [Test]
-        public void InvalidDonationAmountsWhenCalculatingGiftAid()
+        [TestCase(1.99)]
+        [TestCase(100,000.01)]
+        public void InvalidDonationAmountsWhenCalculatingGiftAid(decimal donation)  
         {
             new GiftAidSteps()
-                .Given(x => x.GivenADonationOf(1.99m))
+                .Given(x => x.GivenADonationOf(donation))
                 .When(x => x.WhenRequestIsSentToCalculateGiftAid())
                 .Then(x => x.ThenBadRequestIsReturned())
                 .BDDfy();
