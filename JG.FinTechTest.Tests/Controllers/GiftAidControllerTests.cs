@@ -126,7 +126,8 @@ namespace JG.FinTechTest.Tests.Controllers
 
         public void ThenTheLocationUriIsSet()
         {
-            Assert.That(_httpResponse.Headers.Location, Is.EqualTo("/location/to/get/resource/123"));
+            var locationUri = _httpResponse.Headers.Location.ToString();
+            Assert.That(locationUri, Is.EqualTo("location/to/get/resource/123"));
         }
 
         public void ThenAnOkayResponseIsReturned()

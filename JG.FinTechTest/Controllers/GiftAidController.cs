@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using JG.FinTechTest.Commands;
 using JG.FinTechTest.Models;
 using JG.FinTechTest.Services;
@@ -34,11 +35,10 @@ namespace JG.FinTechTest.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]Donation donation)
+        public async Task<IActionResult> Post([FromBody]Donation donation)
         {
-            _addDonationCommand.Execute(donation);
-
-            return new CreatedResult(string.Empty, donation);
+            var id = await _addDonationCommand.Execute(donation);
+            return new CreatedResult($"location/to/get/resource/{id}", donation);
         }
     }
 }
